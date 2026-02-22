@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>iPad 2 全功能相容時鐘</title>
+    <title>iPad 2 居中修正版</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html {
@@ -12,31 +12,47 @@
             background-color: #000000;
             font-family: Helvetica, Arial, sans-serif;
             overflow: hidden;
-            -webkit-user-select: none;
         }
 
-        /* 佈局架構 - 確保 iOS 9 相容 */
+        /* 頂部與底部佈局 */
         .top-section { position: absolute; top: 40px; left: 40px; }
-        .middle-section { 
-            position: absolute; top: 50%; left: 50%; width: 100%; text-align: center;
-            -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%);
-        }
         .bottom-section { position: absolute; bottom: 40px; left: 40px; right: 40px; }
 
-        .date-display { font-size: 32px; color: #FFFF00; font-weight: bold; }
-        .time-display { 
-            font-size: 160px; color: #FFFFFF; font-weight: bold; white-space: nowrap; 
-            display: inline-block; -webkit-transform-origin: center center;
+        /* 中間時間容器：確保寬度撐滿並置中 */
+        .middle-section { 
+            position: absolute; 
+            top: 50%; 
+            left: 0; 
+            width: 100%; 
+            text-align: center;
+            overflow: visible; /* 允許縮放後超出容器但不被切掉 */
+            -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
         }
+
+        .date-display { font-size: 32px; color: #FFFF00; font-weight: bold; }
+        
+        /* 時間顯示本體 */
+        .time-display { 
+            font-size: 160px; 
+            color: #FFFFFF; 
+            font-weight: bold; 
+            white-space: nowrap; 
+            display: inline-block;
+            margin: 0 auto;
+            /* 修正 iPad 2 縮放偏移的關鍵 */
+            -webkit-transform-origin: center center;
+            transform-origin: center center;
+        }
+
         .weather-display { font-size: 28px; color: #FFFF00; font-weight: bold; }
 
         .control-button {
             position: absolute; bottom: 0; right: 0;
-            width: 25px; height: 25px; background: rgba(255,255,0,0.2);
-            border: 1px solid rgba(255,255,0,0.5); border-radius: 15px;
+            width: 30px; height: 30px; background: rgba(255,255,0,0.1);
+            border: 1px solid rgba(255,255,0,0.3); border-radius: 15px;
         }
 
-        /* 設定面板 */
         .main-popup {
             position: absolute; bottom: 40px; right: 10px;
             background: rgba(10, 10, 10, 0.98); border: 2px solid #FFFF00;
@@ -44,27 +60,17 @@
             max-height: 80%; overflow-y: scroll; -webkit-overflow-scrolling: touch;
         }
         .show { display: block; }
-        
-        .tab-header { margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px; }
         .section-title { color: #FFFF00; font-size: 14px; margin: 10px 0 5px; text-align: center; border-top: 1px dotted #333; padding-top: 10px; }
-        
-        .btn { 
-            background: #333; color: #FFFF00; border: 1px solid #FFFF00;
-            padding: 8px; margin: 2px; border-radius: 4px; font-size: 14px; cursor: pointer;
-        }
-        .btn-sm { width: 40px; font-weight: bold; }
-        
-        .color-row { text-align: center; margin-bottom: 5px; }
-        .swatch { 
-            display: inline-block; width: 30px; height: 30px; 
-            margin: 3px; border: 1px solid #666; border-radius: 3px; 
-        }
+        .btn { background: #333; color: #FFFF00; border: 1px solid #FFFF00; padding: 8px; margin: 2px; border-radius: 4px; font-size: 14px; }
+        .btn-sm { width: 45px; font-weight: bold; }
+        .color-row { text-align: center; margin-bottom: 5px; color: #fff; }
+        .swatch { display: inline-block; width: 30px; height: 30px; margin: 3px; border: 1px solid #666; border-radius: 3px; }
     </style>
 </head>
 <body>
 
     <div class="top-section">
-        <div id="dateDisplay" class="date-display">讀取日期...</div>
+        <div id="dateDisplay" class="date-display">載入中...</div>
     </div>
 
     <div class="middle-section">
@@ -72,52 +78,39 @@
     </div>
 
     <div class="bottom-section">
-        <div id="weatherDisplay" class="weather-display">讀取天氣...</div>
+        <div id="weatherDisplay" class="weather-display">定位中...</div>
         <button id="controlBtn" class="control-button"></button>
     </div>
 
     <div id="mainPopup" class="main-popup">
-        <div class="tab-header">
-            <button class="btn" style="width:100%" onclick="toggleFormat()">切換 12/24H 制</button>
-        </div>
+        <button class="btn" style="width:100%" onclick="toggleFormat()">切換 12/24H 制</button>
 
-        <div class="section-title">時間寬高調整</div>
+        <div class="section-title">時間比例修正 (置中縮放)</div>
         <div class="color-row">
-            寬: <button class="btn btn-sm" onclick="adjTimeW(-0.05)">-</button>
+            寬度: <button class="btn btn-sm" onclick="adjTimeW(-0.05)">-</button>
             <span id="wLab">100%</span>
             <button class="btn btn-sm" onclick="adjTimeW(0.05)">+</button>
         </div>
         <div class="color-row">
-            高: <button class="btn btn-sm" onclick="adjTimeH(-0.1)">-</button>
+            高度: <button class="btn btn-sm" onclick="adjTimeH(-0.1)">-</button>
             <span id="hLab">100%</span>
             <button class="btn btn-sm" onclick="adjTimeH(0.1)">+</button>
         </div>
 
-        <div class="section-title">日期 & 天氣大小</div>
-        <div class="color-row">
-            日期: <button class="btn btn-sm" onclick="adjOtherF(1, -2)">-</button>
-            <button class="btn btn-sm" onclick="adjOtherF(1, 2)">+</button>
-            天氣: <button class="btn btn-sm" onclick="adjOtherF(3, -2)">-</button>
-            <button class="btn btn-sm" onclick="adjOtherF(3, 2)">+</button>
-        </div>
-
-        <div class="section-title">日期顏色</div>
+        <div class="section-title">字體顏色設定</div>
+        <div class="color-row">日期顏色</div>
         <div id="palette1" class="color-row"></div>
-
-        <div class="section-title">時間顏色</div>
+        <div class="color-row">時間顏色</div>
         <div id="palette2" class="color-row"></div>
-
-        <div class="section-title">天氣顏色</div>
+        <div class="color-row">天氣顏色</div>
         <div id="palette3" class="color-row"></div>
 
-        <button class="btn" style="width:100%; margin-top:20px; background:#400; color:#fff;" onclick="closeMenu()">關閉設定</button>
+        <button class="btn" style="width:100%; margin-top:20px; background:#400; color:#fff;" onclick="closeMenu()">儲存並關閉</button>
     </div>
 
     <script>
-        // 基本變數
         var is12H = true;
         var scaleX = 1.0, scaleY = 1.0;
-        var dateF = 32, weatherF = 28;
         var colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#FFFFFF', '#FF69B4', '#00CED1'];
         
         var tDiv = document.getElementById('timeDisplay');
@@ -125,7 +118,6 @@
         var wDiv = document.getElementById('weatherDisplay');
         var menu = document.getElementById('mainPopup');
 
-        // 初始化顏色選擇器
         function initPalettes() {
             for(var i=1; i<=3; i++) {
                 var container = document.getElementById('palette' + i);
@@ -133,19 +125,16 @@
                     var s = document.createElement('div');
                     s.className = 'swatch';
                     s.style.backgroundColor = colors[j];
-                    // 閉包處理舊版 JS 循環問題
-                    (function(target, color){
-                        s.onclick = function() { applyColor(target, color); };
+                    (function(t, c){
+                        s.onclick = function() {
+                            if(t === 1) dDiv.style.color = c;
+                            if(t === 2) tDiv.style.color = c;
+                            if(t === 3) wDiv.style.color = c;
+                        };
                     })(i, colors[j]);
                     container.appendChild(s);
                 }
             }
-        }
-
-        function applyColor(target, color) {
-            if(target === 1) dDiv.style.color = color;
-            if(target === 2) tDiv.style.color = color;
-            if(target === 3) wDiv.style.color = color;
         }
 
         function update() {
@@ -165,22 +154,17 @@
             tDiv.innerHTML = ampm + h + ":" + m + ":" + s;
         }
 
-        function adjTimeW(v) { scaleX += v; applyTransform(); }
-        function adjTimeH(v) { scaleY += v; applyTransform(); }
-        
+        // 核心修正：僅縮放 Scale，位移交給外層容器控制
         function applyTransform() {
-            var s = "translate(-50%, -50%) scale(" + scaleX + "," + scaleY + ")";
+            var s = "scale(" + scaleX + "," + scaleY + ")";
             tDiv.style.webkitTransform = s;
             tDiv.style.transform = s;
             document.getElementById('wLab').innerHTML = Math.round(scaleX * 100) + '%';
             document.getElementById('hLab').innerHTML = Math.round(scaleY * 100) + '%';
         }
 
-        function adjOtherF(target, v) {
-            if(target === 1) { dateF += v; dDiv.style.fontSize = dateF + "px"; }
-            if(target === 3) { weatherF += v; wDiv.style.fontSize = weatherF + "px"; }
-        }
-
+        function adjTimeW(v) { scaleX += v; applyTransform(); }
+        function adjTimeH(v) { scaleY += v; applyTransform(); }
         function toggleFormat() { is12H = !is12H; update(); }
         
         function getWeather() {
@@ -203,7 +187,6 @@
 
         function closeMenu() { menu.className = "main-popup"; }
 
-        // 啟動流程
         initPalettes();
         setInterval(update, 1000);
         update();
