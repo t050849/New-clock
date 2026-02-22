@@ -55,7 +55,7 @@
 
         .date-display {
             font-size: 32px;
-            color: #00FF00;
+            color: #FFFF00; /* 修改：預設改為黃色 */
             font-weight: bold;
             letter-spacing: 2px;
             transition: font-size 0.3s ease, color 0.3s ease;
@@ -74,7 +74,7 @@
 
         .time-display {
             font-size: 160px;
-            color: #FFFFFF;
+            color: #FFFFFF; /* 修改：預設改為白色 */
             font-weight: bold;
             letter-spacing: 0px;
             line-height: 0.9;
@@ -93,7 +93,7 @@
 
         .weather-display {
             font-size: 28px;
-            color: #00FF00;
+            color: #FFFF00; /* 修改：預設改為黃色 */
             font-weight: bold;
             letter-spacing: 1px;
             transition: font-size 0.3s ease, color 0.3s ease;
@@ -102,8 +102,8 @@
         .control-button {
             width: 12px;
             height: 12px;
-            background-color: rgba(0, 255, 0, 0.2);
-            border: 1px solid rgba(0, 255, 0, 0.4);
+            background-color: rgba(255, 255, 0, 0.2);
+            border: 1px solid rgba(255, 255, 0, 0.4);
             border-radius: 50%;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -114,8 +114,8 @@
         }
 
         .control-button:hover {
-            background-color: rgba(0, 255, 0, 0.5);
-            border-color: rgba(0, 255, 0, 0.8);
+            background-color: rgba(255, 255, 0, 0.5);
+            border-color: rgba(255, 255, 0, 0.8);
         }
 
         .main-popup {
@@ -123,7 +123,7 @@
             bottom: 30px;
             right: 0;
             background-color: rgba(0, 0, 0, 0.95);
-            border: 2px solid rgba(0, 255, 0, 0.5);
+            border: 2px solid rgba(255, 255, 0, 0.5);
             border-radius: 8px;
             padding: 15px;
             display: none;
@@ -141,7 +141,7 @@
             display: flex;
             gap: 8px;
             margin-bottom: 10px;
-            border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 0, 0.3);
             padding-bottom: 8px;
             display: -webkit-flex;
             -webkit-gap: 8px;
@@ -151,9 +151,9 @@
             flex: 1;
             -webkit-flex: 1;
             padding: 6px;
-            background-color: rgba(0, 255, 0, 0.2);
-            border: 1px solid rgba(0, 255, 0, 0.4);
-            color: #00FF00;
+            background-color: rgba(255, 255, 0, 0.2);
+            border: 1px solid rgba(255, 255, 0, 0.4);
+            color: #FFFF00;
             font-size: 11px;
             font-weight: bold;
             cursor: pointer;
@@ -165,8 +165,8 @@
         }
 
         .menu-tab.active {
-            background-color: rgba(0, 255, 0, 0.5);
-            border-color: rgba(0, 255, 0, 0.8);
+            background-color: rgba(255, 255, 0, 0.5);
+            border-color: rgba(255, 255, 0, 0.8);
         }
 
         .popup-content {
@@ -191,9 +191,9 @@
         .popup-btn {
             width: 30px;
             height: 30px;
-            background-color: rgba(0, 255, 0, 0.3);
-            border: 1px solid rgba(0, 255, 0, 0.5);
-            color: #00FF00;
+            background-color: rgba(255, 255, 0, 0.3);
+            border: 1px solid rgba(255, 255, 0, 0.5);
+            color: #FFFF00;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
@@ -203,7 +203,7 @@
         }
 
         .popup-label {
-            color: #00FF00;
+            color: #FFFF00;
             font-size: 12px;
             font-weight: bold;
             min-width: 35px;
@@ -215,7 +215,7 @@
         }
 
         .popup-title {
-            color: #00FF00;
+            color: #FFFF00;
             font-size: 10px;
             margin-bottom: 5px;
             text-align: center;
@@ -231,7 +231,7 @@
         .color-swatch {
             width: 35px;
             height: 35px;
-            border: 2px solid rgba(0, 255, 0, 0.5);
+            border: 2px solid rgba(255, 255, 0, 0.5);
             border-radius: 4px;
             cursor: pointer;
             -webkit-appearance: none;
@@ -250,9 +250,9 @@
         .rgb-input {
             width: 50px;
             padding: 5px;
-            background-color: rgba(0, 255, 0, 0.1);
-            border: 1px solid rgba(0, 255, 0, 0.5);
-            color: #00FF00;
+            background-color: rgba(255, 255, 0, 0.1);
+            border: 1px solid rgba(255, 255, 0, 0.5);
+            color: #FFFF00;
             border-radius: 3px;
             font-size: 11px;
             text-align: center;
@@ -270,13 +270,13 @@
         .preview-box {
             width: 50px;
             height: 40px;
-            border: 2px solid rgba(0, 255, 0, 0.5);
+            border: 2px solid rgba(255, 255, 0, 0.5);
             border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 10px;
-            color: #00FF00;
+            color: #FFFF00;
         }
     </style>
 </head>
@@ -352,10 +352,10 @@
         var userLongitude = 121.2685473;
         var OPENWEATHERMAP_API_KEY = '5d13f280068f27e7b123c2b25149a95c';
 
-        // ==================== 全局變數 ====================
+        // ==================== 全局變數 (已更新預設顏色) ====================
         var is12HourFormat = true;
         var fontSizeMultiplier1 = 1.0, fontSizeMultiplier2 = 1.0, fontSizeMultiplier3 = 1.0;
-        var color1 = '#00FF00', color2 = '#FFFFFF', color3 = '#00FF00';
+        var color1 = '#FFFF00', color2 = '#FFFFFF', color3 = '#FFFF00';
         var popupOpen = false;
         var baseFontSizes = { date: 32, time: 160, weather: 28 };
 
@@ -395,7 +395,7 @@
             xhr.send();
         }
 
-        // ==================== 設定與 UI 邏輯 (簡化整合) ====================
+        // ==================== 設定與 UI 邏輯 ====================
         function init() {
             loadSettings();
             updateClock();
@@ -464,7 +464,7 @@
                     e.stopPropagation();
                     var val = document.getElementById('rgb'+i).value;
                     if(/^#[0-9A-F]{6}$/i.test(val)) applyColor(i, val);
-                    else alert('請輸入正確格式，如 #00FF00');
+                    else alert('請輸入正確格式，如 #FFFF00');
                 };
             }
         }
@@ -474,7 +474,7 @@
             var el = [null, dDE, tDE, wDE][i];
             el.style.color = c;
             var prev = document.getElementById('preview'+i);
-            prev.style.color = c; prev.textContent = c;
+            if(prev) { prev.style.color = c; prev.textContent = c; }
             saveSettings();
         }
 
@@ -496,6 +496,8 @@
         }
 
         function closeMainPopup() { popupOpen = false; document.getElementById('mainPopup').classList.remove('show'); }
+
+        function setupColorButtons() { /* 已整合至 initColorPalettes */ }
 
         window.onload = init;
     </script>
