@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>iPad 2 居中修正版</title>
+    <title>iPad 2 完整功能修正版</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html {
@@ -14,33 +14,28 @@
             overflow: hidden;
         }
 
-        /* 頂部與底部佈局 */
+        /* 佈局結構 */
         .top-section { position: absolute; top: 40px; left: 40px; }
         .bottom-section { position: absolute; bottom: 40px; left: 40px; right: 40px; }
 
-        /* 中間時間容器：確保寬度撐滿並置中 */
         .middle-section { 
             position: absolute; 
             top: 50%; 
             left: 0; 
             width: 100%; 
             text-align: center;
-            overflow: visible; /* 允許縮放後超出容器但不被切掉 */
             -webkit-transform: translateY(-50%);
             transform: translateY(-50%);
         }
 
         .date-display { font-size: 32px; color: #FFFF00; font-weight: bold; }
         
-        /* 時間顯示本體 */
         .time-display { 
             font-size: 160px; 
             color: #FFFFFF; 
             font-weight: bold; 
             white-space: nowrap; 
             display: inline-block;
-            margin: 0 auto;
-            /* 修正 iPad 2 縮放偏移的關鍵 */
             -webkit-transform-origin: center center;
             transform-origin: center center;
         }
@@ -53,17 +48,19 @@
             border: 1px solid rgba(255,255,0,0.3); border-radius: 15px;
         }
 
+        /* 設定面板 */
         .main-popup {
             position: absolute; bottom: 40px; right: 10px;
             background: rgba(10, 10, 10, 0.98); border: 2px solid #FFFF00;
             padding: 15px; display: none; z-index: 1000; width: 300px;
-            max-height: 80%; overflow-y: scroll; -webkit-overflow-scrolling: touch;
+            max-height: 85%; overflow-y: scroll; -webkit-overflow-scrolling: touch;
         }
         .show { display: block; }
-        .section-title { color: #FFFF00; font-size: 14px; margin: 10px 0 5px; text-align: center; border-top: 1px dotted #333; padding-top: 10px; }
+        .section-title { color: #FFFF00; font-size: 13px; margin: 12px 0 8px; text-align: center; border-top: 1px dotted #444; padding-top: 10px; }
         .btn { background: #333; color: #FFFF00; border: 1px solid #FFFF00; padding: 8px; margin: 2px; border-radius: 4px; font-size: 14px; }
         .btn-sm { width: 45px; font-weight: bold; }
-        .color-row { text-align: center; margin-bottom: 5px; color: #fff; }
+        .val-lab { color: #fff; font-size: 12px; min-width: 40px; display: inline-block; }
+        .color-row { text-align: center; margin-bottom: 5px; }
         .swatch { display: inline-block; width: 30px; height: 30px; margin: 3px; border: 1px solid #666; border-radius: 3px; }
     </style>
 </head>
@@ -85,32 +82,45 @@
     <div id="mainPopup" class="main-popup">
         <button class="btn" style="width:100%" onclick="toggleFormat()">切換 12/24H 制</button>
 
-        <div class="section-title">時間比例修正 (置中縮放)</div>
+        <div class="section-title">時間比例 (置中縮放)</div>
         <div class="color-row">
             寬度: <button class="btn btn-sm" onclick="adjTimeW(-0.05)">-</button>
-            <span id="wLab">100%</span>
+            <span id="wLab" class="val-lab">100%</span>
             <button class="btn btn-sm" onclick="adjTimeW(0.05)">+</button>
         </div>
         <div class="color-row">
             高度: <button class="btn btn-sm" onclick="adjTimeH(-0.1)">-</button>
-            <span id="hLab">100%</span>
+            <span id="hLab" class="val-lab">100%</span>
             <button class="btn btn-sm" onclick="adjTimeH(0.1)">+</button>
         </div>
 
+        <div class="section-title">日期 & 天氣大小</div>
+        <div class="color-row">
+            日期: <button class="btn btn-sm" onclick="adjOtherF(1, -2)">-</button>
+            <span id="dSizeLab" class="val-lab">32px</span>
+            <button class="btn btn-sm" onclick="adjOtherF(1, 2)">+</button>
+        </div>
+        <div class="color-row">
+            天氣: <button class="btn btn-sm" onclick="adjOtherF(3, -2)">-</button>
+            <span id="wSizeLab" class="val-lab">28px</span>
+            <button class="btn btn-sm" onclick="adjOtherF(3, 2)">+</button>
+        </div>
+
         <div class="section-title">字體顏色設定</div>
-        <div class="color-row">日期顏色</div>
+        <div class="color-row" style="color:#aaa; font-size:11px;">日期顏色</div>
         <div id="palette1" class="color-row"></div>
-        <div class="color-row">時間顏色</div>
+        <div class="color-row" style="color:#aaa; font-size:11px;">時間顏色</div>
         <div id="palette2" class="color-row"></div>
-        <div class="color-row">天氣顏色</div>
+        <div class="color-row" style="color:#aaa; font-size:11px;">天氣顏色</div>
         <div id="palette3" class="color-row"></div>
 
-        <button class="btn" style="width:100%; margin-top:20px; background:#400; color:#fff;" onclick="closeMenu()">儲存並關閉</button>
+        <button class="btn" style="width:100%; margin-top:20px; background:#400; color:#fff; border:none;" onclick="closeMenu()">儲存並關閉</button>
     </div>
 
     <script>
         var is12H = true;
         var scaleX = 1.0, scaleY = 1.0;
+        var dateF = 32, weatherF = 28;
         var colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#FFFFFF', '#FF69B4', '#00CED1'];
         
         var tDiv = document.getElementById('timeDisplay');
@@ -154,7 +164,6 @@
             tDiv.innerHTML = ampm + h + ":" + m + ":" + s;
         }
 
-        // 核心修正：僅縮放 Scale，位移交給外層容器控制
         function applyTransform() {
             var s = "scale(" + scaleX + "," + scaleY + ")";
             tDiv.style.webkitTransform = s;
@@ -165,6 +174,21 @@
 
         function adjTimeW(v) { scaleX += v; applyTransform(); }
         function adjTimeH(v) { scaleY += v; applyTransform(); }
+        
+        // 補回：調整日期與天氣字體大小的函數
+        function adjOtherF(target, v) {
+            if(target === 1) { 
+                dateF += v; 
+                dDiv.style.fontSize = dateF + "px"; 
+                document.getElementById('dSizeLab').innerHTML = dateF + "px";
+            }
+            if(target === 3) { 
+                weatherF += v; 
+                wDiv.style.fontSize = weatherF + "px"; 
+                document.getElementById('wSizeLab').innerHTML = weatherF + "px";
+            }
+        }
+
         function toggleFormat() { is12H = !is12H; update(); }
         
         function getWeather() {
