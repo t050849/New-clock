@@ -4,95 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>iPad 2 專用時鐘</title>
+    <title>iPad 2 全功能相容時鐘</title>
     <style>
-        * { margin: 0; padding: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html {
             width: 100%; height: 100%;
             background-color: #000000;
-            color: #FFFFFF;
             font-family: Helvetica, Arial, sans-serif;
             overflow: hidden;
+            -webkit-user-select: none;
         }
 
-        /* 使用絕對定位替代 Flexbox，確保 iOS 9 相容性 */
-        .top-section {
-            position: absolute;
-            top: 40px; left: 40px;
-            width: 100%;
+        /* 佈局架構 - 確保 iOS 9 相容 */
+        .top-section { position: absolute; top: 40px; left: 40px; }
+        .middle-section { 
+            position: absolute; top: 50%; left: 50%; width: 100%; text-align: center;
+            -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%);
         }
+        .bottom-section { position: absolute; bottom: 40px; left: 40px; right: 40px; }
 
-        .middle-section {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 100%;
-            text-align: center;
-            /* 舊版 Safari 必須帶 -webkit- 前綴 */
-            -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+        .date-display { font-size: 32px; color: #FFFF00; font-weight: bold; }
+        .time-display { 
+            font-size: 160px; color: #FFFFFF; font-weight: bold; white-space: nowrap; 
+            display: inline-block; -webkit-transform-origin: center center;
         }
-
-        .bottom-section {
-            position: absolute;
-            bottom: 40px; left: 40px; right: 40px;
-        }
-
-        .date-display {
-            font-size: 32px;
-            color: #FFFF00;
-            font-weight: bold;
-        }
-
-        .time-display {
-            font-size: 140px; /* 稍微縮小防止 iPad 2 跑版 */
-            color: #FFFFFF;
-            font-weight: bold;
-            white-space: nowrap;
-            display: inline-block;
-            -webkit-transform-origin: center center;
-        }
-
-        .weather-display {
-            font-size: 28px;
-            color: #FFFF00;
-            font-weight: bold;
-        }
+        .weather-display { font-size: 28px; color: #FFFF00; font-weight: bold; }
 
         .control-button {
-            position: absolute;
-            bottom: 0; right: 0;
-            width: 20px; height: 20px;
-            background-color: #333;
-            border-radius: 10px;
-            border: none;
-            opacity: 0.3;
+            position: absolute; bottom: 0; right: 0;
+            width: 25px; height: 25px; background: rgba(255,255,0,0.2);
+            border: 1px solid rgba(255,255,0,0.5); border-radius: 15px;
         }
 
-        /* 選單簡單化 */
+        /* 設定面板 */
         .main-popup {
-            position: absolute;
-            bottom: 50px; right: 20px;
-            background: rgba(20, 20, 20, 0.95);
-            border: 1px solid #FFFF00;
-            padding: 15px;
-            display: none;
-            z-index: 999;
-            width: 260px;
-            color: #FFFF00;
+            position: absolute; bottom: 40px; right: 10px;
+            background: rgba(10, 10, 10, 0.98); border: 2px solid #FFFF00;
+            padding: 15px; display: none; z-index: 1000; width: 300px;
+            max-height: 80%; overflow-y: scroll; -webkit-overflow-scrolling: touch;
         }
-
         .show { display: block; }
-        .popup-section { margin-bottom: 10px; text-align: center; }
+        
+        .tab-header { margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        .section-title { color: #FFFF00; font-size: 14px; margin: 10px 0 5px; text-align: center; border-top: 1px dotted #333; padding-top: 10px; }
+        
         .btn { 
-            padding: 10px; background: #444; color: #fff; border: none; 
-            margin: 2px; border-radius: 4px; font-size: 14px;
+            background: #333; color: #FFFF00; border: 1px solid #FFFF00;
+            padding: 8px; margin: 2px; border-radius: 4px; font-size: 14px; cursor: pointer;
+        }
+        .btn-sm { width: 40px; font-weight: bold; }
+        
+        .color-row { text-align: center; margin-bottom: 5px; }
+        .swatch { 
+            display: inline-block; width: 30px; height: 30px; 
+            margin: 3px; border: 1px solid #666; border-radius: 3px; 
         }
     </style>
 </head>
 <body>
 
     <div class="top-section">
-        <div id="dateDisplay" class="date-display">正在讀取日期...</div>
+        <div id="dateDisplay" class="date-display">讀取日期...</div>
     </div>
 
     <div class="middle-section">
@@ -100,70 +72,119 @@
     </div>
 
     <div class="bottom-section">
-        <div id="weatherDisplay" class="weather-display">正在讀取天氣...</div>
+        <div id="weatherDisplay" class="weather-display">讀取天氣...</div>
         <button id="controlBtn" class="control-button"></button>
     </div>
 
     <div id="mainPopup" class="main-popup">
-        <div class="popup-section">
-            <p>時間格式</p>
-            <button class="btn" onclick="toggleFormat()">切換 12/24H</button>
+        <div class="tab-header">
+            <button class="btn" style="width:100%" onclick="toggleFormat()">切換 12/24H 制</button>
         </div>
-        <div class="popup-section">
-            <p>時間寬度 (W)</p>
-            <button class="btn" onclick="adjustW(-0.05)">-</button>
-            <button class="btn" onclick="adjustW(0.05)">+</button>
+
+        <div class="section-title">時間寬高調整</div>
+        <div class="color-row">
+            寬: <button class="btn btn-sm" onclick="adjTimeW(-0.05)">-</button>
+            <span id="wLab">100%</span>
+            <button class="btn btn-sm" onclick="adjTimeW(0.05)">+</button>
         </div>
-        <div class="popup-section">
-            <p>時間高度 (H)</p>
-            <button class="btn" onclick="adjustH(-0.1)">-</button>
-            <button class="btn" onclick="adjustH(0.1)">+</button>
+        <div class="color-row">
+            高: <button class="btn btn-sm" onclick="adjTimeH(-0.1)">-</button>
+            <span id="hLab">100%</span>
+            <button class="btn btn-sm" onclick="adjTimeH(0.1)">+</button>
         </div>
-        <button class="btn" style="width:100%; background: #600;" onclick="closeMenu()">關閉選單</button>
+
+        <div class="section-title">日期 & 天氣大小</div>
+        <div class="color-row">
+            日期: <button class="btn btn-sm" onclick="adjOtherF(1, -2)">-</button>
+            <button class="btn btn-sm" onclick="adjOtherF(1, 2)">+</button>
+            天氣: <button class="btn btn-sm" onclick="adjOtherF(3, -2)">-</button>
+            <button class="btn btn-sm" onclick="adjOtherF(3, 2)">+</button>
+        </div>
+
+        <div class="section-title">日期顏色</div>
+        <div id="palette1" class="color-row"></div>
+
+        <div class="section-title">時間顏色</div>
+        <div id="palette2" class="color-row"></div>
+
+        <div class="section-title">天氣顏色</div>
+        <div id="palette3" class="color-row"></div>
+
+        <button class="btn" style="width:100%; margin-top:20px; background:#400; color:#fff;" onclick="closeMenu()">關閉設定</button>
     </div>
 
     <script>
-        // 全部使用 var 以相容舊版瀏覽器
+        // 基本變數
         var is12H = true;
-        var scaleX = 1.0;
-        var scaleY = 1.0;
-        var lat = 25.0074129;
-        var lon = 121.2685473;
-        var apiKey = '5d13f280068f27e7b123c2b25149a95c';
-
+        var scaleX = 1.0, scaleY = 1.0;
+        var dateF = 32, weatherF = 28;
+        var colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#FFFFFF', '#FF69B4', '#00CED1'];
+        
         var tDiv = document.getElementById('timeDisplay');
         var dDiv = document.getElementById('dateDisplay');
         var wDiv = document.getElementById('weatherDisplay');
         var menu = document.getElementById('mainPopup');
 
+        // 初始化顏色選擇器
+        function initPalettes() {
+            for(var i=1; i<=3; i++) {
+                var container = document.getElementById('palette' + i);
+                for(var j=0; j<colors.length; j++) {
+                    var s = document.createElement('div');
+                    s.className = 'swatch';
+                    s.style.backgroundColor = colors[j];
+                    // 閉包處理舊版 JS 循環問題
+                    (function(target, color){
+                        s.onclick = function() { applyColor(target, color); };
+                    })(i, colors[j]);
+                    container.appendChild(s);
+                }
+            }
+        }
+
+        function applyColor(target, color) {
+            if(target === 1) dDiv.style.color = color;
+            if(target === 2) tDiv.style.color = color;
+            if(target === 3) wDiv.style.color = color;
+        }
+
         function update() {
             var now = new Date();
             var days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
-            
-            // 日期
             dDiv.innerHTML = now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日 ' + days[now.getDay()];
 
-            // 時間
-            var h = now.getHours();
-            var m = now.getMinutes();
-            var s = now.getSeconds();
+            var h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
             var ampm = "";
-
             if (is12H) {
                 ampm = h >= 12 ? "PM " : "AM ";
-                h = h % 12;
-                if (h === 0) h = 12;
+                h = h % 12; if (h === 0) h = 12;
             }
-
             if (h < 10) h = "0" + h;
             if (m < 10) m = "0" + m;
             if (s < 10) s = "0" + s;
-
             tDiv.innerHTML = ampm + h + ":" + m + ":" + s;
         }
 
+        function adjTimeW(v) { scaleX += v; applyTransform(); }
+        function adjTimeH(v) { scaleY += v; applyTransform(); }
+        
+        function applyTransform() {
+            var s = "translate(-50%, -50%) scale(" + scaleX + "," + scaleY + ")";
+            tDiv.style.webkitTransform = s;
+            tDiv.style.transform = s;
+            document.getElementById('wLab').innerHTML = Math.round(scaleX * 100) + '%';
+            document.getElementById('hLab').innerHTML = Math.round(scaleY * 100) + '%';
+        }
+
+        function adjOtherF(target, v) {
+            if(target === 1) { dateF += v; dDiv.style.fontSize = dateF + "px"; }
+            if(target === 3) { weatherF += v; wDiv.style.fontSize = weatherF + "px"; }
+        }
+
+        function toggleFormat() { is12H = !is12H; update(); }
+        
         function getWeather() {
-            var url = 'https://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lon + '&appid=' + apiKey + '&units=metric&lang=zh_tw';
+            var url = 'https://api.openweathermap.org/data/2.5/weather?lat=25.0074129&lon=121.2685473&appid=5d13f280068f27e7b123c2b25149a95c&units=metric&lang=zh_tw';
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url, true);
             xhr.onreadystatechange = function() {
@@ -175,23 +196,15 @@
             xhr.send();
         }
 
-        // 縮放功能相容語法
-        function applyTransform() {
-            var style = "translate(-50%, -50%) scale(" + scaleX + "," + scaleY + ")";
-            tDiv.style.webkitTransform = style;
-            tDiv.style.transform = style;
-        }
-
-        function adjustW(v) { scaleX += v; applyTransform(); }
-        function adjustH(v) { scaleY += v; applyTransform(); }
-        function toggleFormat() { is12H = !is12H; update(); }
-        function closeMenu() { menu.className = "main-popup"; }
-
-        document.getElementById('controlBtn').onclick = function() {
-            menu.className = "main-popup show";
+        document.getElementById('controlBtn').onclick = function(e) {
+            e.stopPropagation();
+            menu.className = (menu.className === "main-popup") ? "main-popup show" : "main-popup";
         };
 
-        // 啟動
+        function closeMenu() { menu.className = "main-popup"; }
+
+        // 啟動流程
+        initPalettes();
         setInterval(update, 1000);
         update();
         getWeather();
