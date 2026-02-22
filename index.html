@@ -30,7 +30,6 @@
             flex-direction: column;
             justify-content: space-between;
             padding: 40px;
-            cursor: pointer;
             display: -webkit-flex;
             -webkit-flex-direction: column;
             -webkit-justify-content: space-between;
@@ -48,14 +47,11 @@
             display: flex;
             justify-content: flex-start;
             align-items: flex-start;
-            display: -webkit-flex;
-            -webkit-justify-content: flex-start;
-            -webkit-align-items: flex-start;
         }
 
         .date-display {
             font-size: 32px;
-            color: #FFFF00; /* 修改：預設改為黃色 */
+            color: #FFFF00;
             font-weight: bold;
             letter-spacing: 2px;
             transition: font-size 0.3s ease, color 0.3s ease;
@@ -66,15 +62,11 @@
             justify-content: center;
             align-items: center;
             flex: 1;
-            display: -webkit-flex;
-            -webkit-justify-content: center;
-            -webkit-align-items: center;
-            -webkit-flex: 1;
         }
 
         .time-display {
             font-size: 160px;
-            color: #FFFFFF; /* 修改：預設改為白色 */
+            color: #FFFFFF;
             font-weight: bold;
             letter-spacing: 0px;
             line-height: 0.9;
@@ -86,36 +78,26 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            display: -webkit-flex;
-            -webkit-justify-content: space-between;
-            -webkit-align-items: flex-end;
         }
 
         .weather-display {
             font-size: 28px;
-            color: #FFFF00; /* 修改：預設改為黃色 */
+            color: #FFFF00;
             font-weight: bold;
             letter-spacing: 1px;
             transition: font-size 0.3s ease, color 0.3s ease;
         }
 
         .control-button {
-            width: 12px;
-            height: 12px;
+            width: 15px;
+            height: 15px;
             background-color: rgba(255, 255, 0, 0.2);
             border: 1px solid rgba(255, 255, 0, 0.4);
             border-radius: 50%;
             cursor: pointer;
             transition: all 0.3s ease;
-            -webkit-appearance: none;
             appearance: none;
             padding: 0;
-            position: relative;
-        }
-
-        .control-button:hover {
-            background-color: rgba(255, 255, 0, 0.5);
-            border-color: rgba(255, 255, 0, 0.8);
         }
 
         .main-popup {
@@ -143,30 +125,22 @@
             margin-bottom: 10px;
             border-bottom: 1px solid rgba(255, 255, 0, 0.3);
             padding-bottom: 8px;
-            display: -webkit-flex;
-            -webkit-gap: 8px;
         }
 
         .menu-tab {
             flex: 1;
-            -webkit-flex: 1;
             padding: 6px;
-            background-color: rgba(255, 255, 0, 0.2);
-            border: 1px solid rgba(255, 255, 0, 0.4);
+            background-color: rgba(255, 255, 0, 0.1);
+            border: 1px solid rgba(255, 255, 0, 0.3);
             color: #FFFF00;
             font-size: 11px;
-            font-weight: bold;
             cursor: pointer;
             border-radius: 3px;
-            transition: background-color 0.2s ease;
-            -webkit-appearance: none;
-            appearance: none;
-            text-align: center;
         }
 
         .menu-tab.active {
-            background-color: rgba(255, 255, 0, 0.5);
-            border-color: rgba(255, 255, 0, 0.8);
+            background-color: rgba(255, 255, 0, 0.4);
+            border-color: #FFFF00;
         }
 
         .popup-content {
@@ -177,106 +151,85 @@
             display: block;
         }
 
-        .font-size-popup-content {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            justify-content: center;
-            display: -webkit-flex;
-            -webkit-gap: 8px;
-            -webkit-align-items: center;
-            -webkit-justify-content: center;
-        }
-
-        .popup-btn {
-            width: 30px;
-            height: 30px;
-            background-color: rgba(255, 255, 0, 0.3);
-            border: 1px solid rgba(255, 255, 0, 0.5);
-            color: #FFFF00;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 3px;
-            -webkit-appearance: none;
-            padding: 0;
-        }
-
-        .popup-label {
-            color: #FFFF00;
-            font-size: 12px;
-            font-weight: bold;
-            min-width: 35px;
-            text-align: center;
-        }
-
         .popup-section {
-            margin-bottom: 12px;
+            margin-bottom: 15px;
+            border-bottom: 1px border-style: dotted;
+            border-color: rgba(255, 255, 0, 0.1);
+            padding-bottom: 10px;
         }
 
         .popup-title {
             color: #FFFF00;
-            font-size: 10px;
-            margin-bottom: 5px;
+            font-size: 11px;
+            margin-bottom: 8px;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .format-switch-btn {
+            width: 100%;
+            padding: 8px;
+            background-color: rgba(255, 255, 0, 0.2);
+            border: 1px solid #FFFF00;
+            color: #FFFF00;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .font-size-popup-content {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .popup-btn {
+            width: 32px;
+            height: 32px;
+            background-color: rgba(255, 255, 0, 0.2);
+            border: 1px solid #FFFF00;
+            color: #FFFF00;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .popup-label {
+            color: #FFFF00;
+            font-size: 13px;
+            min-width: 45px;
             text-align: center;
         }
 
         .color-palette {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 5px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
             margin-bottom: 10px;
         }
 
         .color-swatch {
-            width: 35px;
-            height: 35px;
-            border: 2px solid rgba(255, 255, 0, 0.5);
+            width: 100%;
+            height: 30px;
+            border: 1px solid rgba(255, 255, 0, 0.3);
             border-radius: 4px;
             cursor: pointer;
-            -webkit-appearance: none;
         }
 
         .rgb-input-group {
             display: flex;
             gap: 5px;
-            margin-bottom: 10px;
-            justify-content: center;
-            display: -webkit-flex;
-            -webkit-gap: 5px;
-            -webkit-justify-content: center;
         }
 
         .rgb-input {
-            width: 50px;
+            flex: 1;
             padding: 5px;
-            background-color: rgba(255, 255, 0, 0.1);
-            border: 1px solid rgba(255, 255, 0, 0.5);
+            background: #222;
+            border: 1px solid #FFFF00;
             color: #FFFF00;
-            border-radius: 3px;
-            font-size: 11px;
+            font-size: 12px;
             text-align: center;
-        }
-
-        .color-preview {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-            display: -webkit-flex;
-            -webkit-gap: 5px;
-            -webkit-justify-content: center;
-        }
-
-        .preview-box {
-            width: 50px;
-            height: 40px;
-            border: 2px solid rgba(255, 255, 0, 0.5);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: #FFFF00;
         }
     </style>
 </head>
@@ -293,16 +246,20 @@
         <div class="bottom-section">
             <div class="weather-display" id="weatherDisplay">定位中...</div>
             <div>
-                <button class="control-button" id="controlBtn" title="調整設定"></button>
+                <button class="control-button" id="controlBtn"></button>
                 <div class="main-popup" id="mainPopup">
                     <div class="popup-menu-tabs">
-                        <button class="menu-tab active" id="fontSizeTab">字體大小</button>
-                        <button class="menu-tab" id="colorTab">顏色</button>
+                        <button class="menu-tab active" id="fontSizeTab">顯示與字體</button>
+                        <button class="menu-tab" id="colorTab">顏色設定</button>
                     </div>
 
                     <div class="popup-content active" id="fontSizeContent">
                         <div class="popup-section">
-                            <div class="popup-title">年月日</div>
+                            <div class="popup-title">時間格式</div>
+                            <button class="format-switch-btn" id="formatToggleBtn">切換至 24H 制</button>
+                        </div>
+                        <div class="popup-section">
+                            <div class="popup-title">日期字體</div>
                             <div class="font-size-popup-content">
                                 <button class="popup-btn" id="decreaseBtn1">−</button>
                                 <span class="popup-label" id="sizeLabel1">100%</span>
@@ -310,7 +267,7 @@
                             </div>
                         </div>
                         <div class="popup-section">
-                            <div class="popup-title">時間</div>
+                            <div class="popup-title">時間字體</div>
                             <div class="font-size-popup-content">
                                 <button class="popup-btn" id="decreaseBtn2">−</button>
                                 <span class="popup-label" id="sizeLabel2">100%</span>
@@ -318,7 +275,7 @@
                             </div>
                         </div>
                         <div class="popup-section">
-                            <div class="popup-title">溫度天氣</div>
+                            <div class="popup-title">天氣字體</div>
                             <div class="font-size-popup-content">
                                 <button class="popup-btn" id="decreaseBtn3">−</button>
                                 <span class="popup-label" id="sizeLabel3">100%</span>
@@ -328,17 +285,29 @@
                     </div>
 
                     <div class="popup-content" id="colorContent">
-                        <div class="popup-section"><div class="popup-title">年月日顏色</div><div class="color-palette" id="palette1"></div>
-                            <div class="rgb-input-group"><input type="text" class="rgb-input" id="rgb1" placeholder="RGB"><button class="popup-btn" id="applyRgb1" style="width: 40px;">應用</button></div>
-                            <div class="color-preview"><div class="preview-box" id="preview1">預覽</div></div>
+                        <div class="popup-section">
+                            <div class="popup-title">日期顏色</div>
+                            <div class="color-palette" id="palette1"></div>
+                            <div class="rgb-input-group">
+                                <input type="text" class="rgb-input" id="rgb1" placeholder="#FFFF00">
+                                <button class="popup-btn" id="applyRgb1" style="width: 50px; font-size: 12px;">套用</button>
+                            </div>
                         </div>
-                        <div class="popup-section"><div class="popup-title">時間顏色</div><div class="color-palette" id="palette2"></div>
-                            <div class="rgb-input-group"><input type="text" class="rgb-input" id="rgb2" placeholder="RGB"><button class="popup-btn" id="applyRgb2" style="width: 40px;">應用</button></div>
-                            <div class="color-preview"><div class="preview-box" id="preview2">預覽</div></div>
+                        <div class="popup-section">
+                            <div class="popup-title">時間顏色</div>
+                            <div class="color-palette" id="palette2"></div>
+                            <div class="rgb-input-group">
+                                <input type="text" class="rgb-input" id="rgb2" placeholder="#FFFFFF">
+                                <button class="popup-btn" id="applyRgb2" style="width: 50px; font-size: 12px;">套用</button>
+                            </div>
                         </div>
-                        <div class="popup-section"><div class="popup-title">溫度顏色</div><div class="color-palette" id="palette3"></div>
-                            <div class="rgb-input-group"><input type="text" class="rgb-input" id="rgb3" placeholder="RGB"><button class="popup-btn" id="applyRgb3" style="width: 40px;">應用</button></div>
-                            <div class="color-preview"><div class="preview-box" id="preview3">預覽</div></div>
+                        <div class="popup-section">
+                            <div class="popup-title">天氣顏色</div>
+                            <div class="color-palette" id="palette3"></div>
+                            <div class="rgb-input-group">
+                                <input type="text" class="rgb-input" id="rgb3" placeholder="#FFFF00">
+                                <button class="popup-btn" id="applyRgb3" style="width: 50px; font-size: 12px;">套用</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -347,22 +316,18 @@
     </div>
 
     <script>
-        // ==================== 更新後座標 ====================
         var userLatitude = 25.0074129;
         var userLongitude = 121.2685473;
         var OPENWEATHERMAP_API_KEY = '5d13f280068f27e7b123c2b25149a95c';
 
-        // ==================== 全局變數 (已更新預設顏色) ====================
         var is12HourFormat = true;
         var fontSizeMultiplier1 = 1.0, fontSizeMultiplier2 = 1.0, fontSizeMultiplier3 = 1.0;
         var color1 = '#FFFF00', color2 = '#FFFFFF', color3 = '#FFFF00';
         var popupOpen = false;
         var baseFontSizes = { date: 32, time: 160, weather: 28 };
 
-        // DOM 元素縮寫
         var dDE = document.getElementById('dateDisplay'), tDE = document.getElementById('timeDisplay'), wDE = document.getElementById('weatherDisplay');
 
-        // ==================== 核心邏輯 ====================
         function updateClock() {
             var now = new Date();
             var weekDays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
@@ -395,7 +360,6 @@
             xhr.send();
         }
 
-        // ==================== 設定與 UI 邏輯 ====================
         function init() {
             loadSettings();
             updateClock();
@@ -404,10 +368,10 @@
             setInterval(fetchWeather, 600000);
             initColorPalettes();
             
+            // 移除原本的 body 點擊切換，改為點擊背景關閉選單
             document.body.onclick = function(e) {
                 if(e.target.id !== 'controlBtn' && !mainPopup.contains(e.target)) {
                     if(popupOpen) closeMainPopup();
-                    else { is12HourFormat = !is12HourFormat; updateClock(); }
                 }
             };
             
@@ -417,9 +381,16 @@
                 mainPopup.classList.toggle('show', popupOpen);
             };
 
+            document.getElementById('formatToggleBtn').onclick = function(e) {
+                e.stopPropagation();
+                is12HourFormat = !is12HourFormat;
+                this.textContent = is12HourFormat ? '切換至 24H 制' : '切換至 12H 制';
+                updateClock();
+                saveSettings();
+            };
+
             setupTabSwitching();
             setupFontButtons();
-            setupColorButtons();
         }
 
         function setupTabSwitching() {
@@ -464,7 +435,7 @@
                     e.stopPropagation();
                     var val = document.getElementById('rgb'+i).value;
                     if(/^#[0-9A-F]{6}$/i.test(val)) applyColor(i, val);
-                    else alert('請輸入正確格式，如 #FFFF00');
+                    else alert('請輸入 #RRGGBB 格式');
                 };
             }
         }
@@ -473,31 +444,34 @@
             window['color'+i] = c;
             var el = [null, dDE, tDE, wDE][i];
             el.style.color = c;
-            var prev = document.getElementById('preview'+i);
-            if(prev) { prev.style.color = c; prev.textContent = c; }
             saveSettings();
         }
 
         function saveSettings() {
             localStorage.setItem('clockSettings', JSON.stringify({
                 f1: fontSizeMultiplier1, f2: fontSizeMultiplier2, f3: fontSizeMultiplier3,
-                c1: color1, c2: color2, c3: color3
+                c1: color1, c2: color2, c3: color3,
+                is12h: is12HourFormat
             }));
         }
 
         function loadSettings() {
             var s = JSON.parse(localStorage.getItem('clockSettings'));
             if(s) {
-                fontSizeMultiplier1 = s.f1; fontSizeMultiplier2 = s.f2; fontSizeMultiplier3 = s.f3;
-                color1 = s.c1; color2 = s.c2; color3 = s.c3;
+                fontSizeMultiplier1 = s.f1 || 1.0; 
+                fontSizeMultiplier2 = s.f2 || 1.0; 
+                fontSizeMultiplier3 = s.f3 || 1.0;
+                color1 = s.c1 || '#FFFF00'; 
+                color2 = s.c2 || '#FFFFFF'; 
+                color3 = s.c3 || '#FFFF00';
+                is12HourFormat = (s.is12h !== undefined) ? s.is12h : true;
             }
+            document.getElementById('formatToggleBtn').textContent = is12HourFormat ? '切換至 24H 制' : '切換至 12H 制';
             updateFontSizes();
             applyColor(1, color1); applyColor(2, color2); applyColor(3, color3);
         }
 
         function closeMainPopup() { popupOpen = false; document.getElementById('mainPopup').classList.remove('show'); }
-
-        function setupColorButtons() { /* 已整合至 initColorPalettes */ }
 
         window.onload = init;
     </script>
