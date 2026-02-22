@@ -1,482 +1,201 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="全螢幕時鐘">
-    <title>全螢幕時鐘 - 桃園區域適配版</title>
+    <title>iPad 2 專用時鐘</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
+        * { margin: 0; padding: 0; }
+        body, html {
+            width: 100%; height: 100%;
             background-color: #000000;
-            font-family: 'Courier New', 'Monaco', monospace;
+            color: #FFFFFF;
+            font-family: Helvetica, Arial, sans-serif;
             overflow: hidden;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
         }
 
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 40px;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-            position: relative;
-        }
-
+        /* 使用絕對定位替代 Flexbox，確保 iOS 9 相容性 */
         .top-section {
-            display: flex;
-            justify-content: flex-start;
-            align-items: flex-start;
+            position: absolute;
+            top: 40px; left: 40px;
+            width: 100%;
+        }
+
+        .middle-section {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 100%;
+            text-align: center;
+            /* 舊版 Safari 必須帶 -webkit- 前綴 */
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        .bottom-section {
+            position: absolute;
+            bottom: 40px; left: 40px; right: 40px;
         }
 
         .date-display {
             font-size: 32px;
             color: #FFFF00;
             font-weight: bold;
-            letter-spacing: 2px;
-            transition: color 0.3s ease;
-        }
-
-        .middle-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: 1;
-            overflow: visible; /* 允許縮放超出範圍預覽 */
         }
 
         .time-display {
-            font-size: 160px; /* 基準字體 */
+            font-size: 140px; /* 稍微縮小防止 iPad 2 跑版 */
             color: #FFFFFF;
             font-weight: bold;
-            letter-spacing: 0px;
-            line-height: 1;
-            text-align: center;
             white-space: nowrap;
             display: inline-block;
-            transform-origin: center center; /* 從中心縮放 */
-            transition: color 0.3s ease;
-        }
-
-        .bottom-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
+            -webkit-transform-origin: center center;
         }
 
         .weather-display {
             font-size: 28px;
             color: #FFFF00;
             font-weight: bold;
-            letter-spacing: 1px;
-            transition: color 0.3s ease;
         }
 
         .control-button {
-            width: 15px;
-            height: 15px;
-            background-color: rgba(255, 255, 0, 0.2);
-            border: 1px solid rgba(255, 255, 0, 0.4);
-            border-radius: 50%;
-            cursor: pointer;
-            appearance: none;
-            padding: 0;
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 20px; height: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            border: none;
+            opacity: 0.3;
         }
 
-        /* 選單樣式 */
+        /* 選單簡單化 */
         .main-popup {
             position: absolute;
-            bottom: 30px;
-            right: 0;
-            background-color: rgba(0, 0, 0, 0.95);
-            border: 2px solid rgba(255, 255, 0, 0.5);
-            border-radius: 8px;
+            bottom: 50px; right: 20px;
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid #FFFF00;
             padding: 15px;
             display: none;
-            z-index: 1000;
-            max-height: 80vh;
-            overflow-y: auto;
-            max-width: 320px;
-        }
-
-        .main-popup.show { display: block; }
-
-        .popup-menu-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 0, 0.3);
-            padding-bottom: 8px;
-        }
-
-        .menu-tab {
-            flex: 1;
-            padding: 6px;
-            background-color: rgba(255, 255, 0, 0.1);
-            border: 1px solid rgba(255, 255, 0, 0.3);
+            z-index: 999;
+            width: 260px;
             color: #FFFF00;
-            font-size: 11px;
-            cursor: pointer;
-            border-radius: 3px;
         }
 
-        .menu-tab.active {
-            background-color: rgba(255, 255, 0, 0.4);
-            border-color: #FFFF00;
-        }
-
-        .popup-content { display: none; }
-        .popup-content.active { display: block; }
-
-        .popup-section {
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px dotted rgba(255, 255, 0, 0.2);
-        }
-
-        .popup-title {
-            color: #FFFF00;
-            font-size: 11px;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .format-switch-btn {
-            width: 100%;
-            padding: 8px;
-            background-color: rgba(255, 255, 0, 0.2);
-            border: 1px solid #FFFF00;
-            color: #FFFF00;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-bottom: 5px;
-        }
-
-        .font-size-popup-content {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .popup-btn {
-            width: 32px;
-            height: 32px;
-            background-color: rgba(255, 255, 0, 0.2);
-            border: 1px solid #FFFF00;
-            color: #FFFF00;
-            font-size: 18px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .popup-label {
-            color: #FFFF00;
-            font-size: 13px;
-            min-width: 60px;
-            text-align: center;
-        }
-
-        .color-palette {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .color-swatch {
-            width: 100%;
-            height: 30px;
-            border: 1px solid rgba(255, 255, 0, 0.3);
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .rgb-input-group {
-            display: flex;
-            gap: 5px;
-        }
-
-        .rgb-input {
-            flex: 1;
-            padding: 5px;
-            background: #222;
-            border: 1px solid #FFFF00;
-            color: #FFFF00;
-            font-size: 12px;
-            text-align: center;
+        .show { display: block; }
+        .popup-section { margin-bottom: 10px; text-align: center; }
+        .btn { 
+            padding: 10px; background: #444; color: #fff; border: none; 
+            margin: 2px; border-radius: 4px; font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="top-section">
-            <div class="date-display" id="dateDisplay">載入中...</div>
+
+    <div class="top-section">
+        <div id="dateDisplay" class="date-display">正在讀取日期...</div>
+    </div>
+
+    <div class="middle-section">
+        <div id="timeDisplay" class="time-display">00:00:00</div>
+    </div>
+
+    <div class="bottom-section">
+        <div id="weatherDisplay" class="weather-display">正在讀取天氣...</div>
+        <button id="controlBtn" class="control-button"></button>
+    </div>
+
+    <div id="mainPopup" class="main-popup">
+        <div class="popup-section">
+            <p>時間格式</p>
+            <button class="btn" onclick="toggleFormat()">切換 12/24H</button>
         </div>
-
-        <div class="middle-section">
-            <div class="time-display" id="timeDisplay">00:00:00</div>
+        <div class="popup-section">
+            <p>時間寬度 (W)</p>
+            <button class="btn" onclick="adjustW(-0.05)">-</button>
+            <button class="btn" onclick="adjustW(0.05)">+</button>
         </div>
-
-        <div class="bottom-section">
-            <div class="weather-display" id="weatherDisplay">定位中...</div>
-            <div>
-                <button class="control-button" id="controlBtn"></button>
-                <div class="main-popup" id="mainPopup">
-                    <div class="popup-menu-tabs">
-                        <button class="menu-tab active" id="fontSizeTab">顯示設定</button>
-                        <button class="menu-tab" id="colorTab">顏色設定</button>
-                    </div>
-
-                    <div class="popup-content active" id="fontSizeContent">
-                        <div class="popup-section">
-                            <div class="popup-title">時間格式</div>
-                            <button class="format-switch-btn" id="formatToggleBtn">切換格式</button>
-                        </div>
-                        
-                        <div class="popup-section">
-                            <div class="popup-title">時間字體【寬度】</div>
-                            <div class="font-size-popup-content">
-                                <button class="popup-btn" id="wDecBtn">−</button>
-                                <span class="popup-label" id="wLabel">100%</span>
-                                <button class="popup-btn" id="wIncBtn">+</button>
-                            </div>
-                        </div>
-
-                        <div class="popup-section">
-                            <div class="popup-title">時間字體【高度】</div>
-                            <div class="font-size-popup-content">
-                                <button class="popup-btn" id="hDecBtn">−</button>
-                                <span class="popup-label" id="hLabel">100%</span>
-                                <button class="popup-btn" id="hIncBtn">+</button>
-                            </div>
-                        </div>
-
-                        <div class="popup-section">
-                            <div class="popup-title">年月日字體大小</div>
-                            <div class="font-size-popup-content">
-                                <button class="popup-btn" id="decreaseBtn1">−</button>
-                                <span class="popup-label" id="sizeLabel1">100%</span>
-                                <button class="popup-btn" id="increaseBtn1">+</button>
-                            </div>
-                        </div>
-
-                        <div class="popup-section">
-                            <div class="popup-title">天氣字體大小</div>
-                            <div class="font-size-popup-content">
-                                <button class="popup-btn" id="decreaseBtn3">−</button>
-                                <span class="popup-label" id="sizeLabel3">100%</span>
-                                <button class="popup-btn" id="increaseBtn3">+</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="popup-content" id="colorContent">
-                        <div class="popup-section">
-                            <div class="popup-title">年月日顏色</div>
-                            <div class="color-palette" id="palette1"></div>
-                        </div>
-                        <div class="popup-section">
-                            <div class="popup-title">時間顏色</div>
-                            <div class="color-palette" id="palette2"></div>
-                        </div>
-                        <div class="popup-section">
-                            <div class="popup-title">天氣顏色</div>
-                            <div class="color-palette" id="palette3"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="popup-section">
+            <p>時間高度 (H)</p>
+            <button class="btn" onclick="adjustH(-0.1)">-</button>
+            <button class="btn" onclick="adjustH(0.1)">+</button>
         </div>
+        <button class="btn" style="width:100%; background: #600;" onclick="closeMenu()">關閉選單</button>
     </div>
 
     <script>
-        var userLatitude = 25.0074129;
-        var userLongitude = 121.2685473;
-        var OPENWEATHERMAP_API_KEY = '5d13f280068f27e7b123c2b25149a95c';
+        // 全部使用 var 以相容舊版瀏覽器
+        var is12H = true;
+        var scaleX = 1.0;
+        var scaleY = 1.0;
+        var lat = 25.0074129;
+        var lon = 121.2685473;
+        var apiKey = '5d13f280068f27e7b123c2b25149a95c';
 
-        var is12HourFormat = true;
-        var fontSizeMultiplier1 = 1.0; // 年月日
-        var fontSizeMultiplier3 = 1.0; // 天氣
-        
-        // 時間專用的寬與高
-        var timeScaleX = 1.0;
-        var timeScaleY = 1.0;
+        var tDiv = document.getElementById('timeDisplay');
+        var dDiv = document.getElementById('dateDisplay');
+        var wDiv = document.getElementById('weatherDisplay');
+        var menu = document.getElementById('mainPopup');
 
-        var color1 = '#FFFF00', color2 = '#FFFFFF', color3 = '#FFFF00';
-        var popupOpen = false;
-        var baseFontSizes = { date: 32, time: 160, weather: 28 };
-
-        var dDE = document.getElementById('dateDisplay'), tDE = document.getElementById('timeDisplay'), wDE = document.getElementById('weatherDisplay');
-
-        function updateClock() {
+        function update() {
             var now = new Date();
-            var weekDays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
-            dDE.textContent = now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日 ' + weekDays[now.getDay()];
+            var days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
             
-            var h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
-            if (is12HourFormat) {
-                var ampm = h >= 12 ? 'PM' : 'AM';
-                h = h % 12 || 12;
-                tDE.textContent = ampm + ' ' + pad(h) + ':' + pad(m) + ':' + pad(s);
-            } else {
-                tDE.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+            // 日期
+            dDiv.innerHTML = now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日 ' + days[now.getDay()];
+
+            // 時間
+            var h = now.getHours();
+            var m = now.getMinutes();
+            var s = now.getSeconds();
+            var ampm = "";
+
+            if (is12H) {
+                ampm = h >= 12 ? "PM " : "AM ";
+                h = h % 12;
+                if (h === 0) h = 12;
             }
+
+            if (h < 10) h = "0" + h;
+            if (m < 10) m = "0" + m;
+            if (s < 10) s = "0" + s;
+
+            tDiv.innerHTML = ampm + h + ":" + m + ":" + s;
         }
 
-        function pad(n) { return n < 10 ? '0' + n : n; }
-
-        function fetchWeather() {
-            var url = 'https://api.openweathermap.org/data/2.5/weather?lat=' + userLatitude + '&lon=' + userLongitude + '&appid=' + OPENWEATHERMAP_API_KEY + '&units=metric&lang=zh_tw';
+        function getWeather() {
+            var url = 'https://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lon + '&appid=' + apiKey + '&units=metric&lang=zh_tw';
             var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
             xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
+                if (xhr.readyState == 4 && xhr.status == 200) {
                     var data = JSON.parse(xhr.responseText);
-                    var temp = Math.round(data.main.temp);
-                    var desc = data.weather[0].description;
-                    wDE.textContent = '新興里 ' + temp + '°C ' + desc;
+                    wDiv.innerHTML = '新興里 ' + Math.round(data.main.temp) + '°C ' + data.weather[0].description;
                 }
             };
-            xhr.open('GET', url, true);
             xhr.send();
         }
 
-        function init() {
-            loadSettings();
-            updateClock();
-            setInterval(updateClock, 1000);
-            fetchWeather();
-            setInterval(fetchWeather, 600000);
-            initColorPalettes();
-            
-            document.body.onclick = function(e) {
-                if(e.target.id !== 'controlBtn' && !mainPopup.contains(e.target)) {
-                    if(popupOpen) closeMainPopup();
-                }
-            };
-            
-            document.getElementById('controlBtn').onclick = function(e) {
-                e.stopPropagation();
-                popupOpen = !popupOpen;
-                mainPopup.classList.toggle('show', popupOpen);
-            };
-
-            document.getElementById('formatToggleBtn').onclick = function(e) {
-                e.stopPropagation();
-                is12HourFormat = !is12HourFormat;
-                updateClock();
-                saveSettings();
-            };
-
-            // 時間寬度控制
-            document.getElementById('wDecBtn').onclick = function(e) { e.stopPropagation(); timeScaleX -= 0.05; updateTimeScale(); };
-            document.getElementById('wIncBtn').onclick = function(e) { e.stopPropagation(); timeScaleX += 0.05; updateTimeScale(); };
-            
-            // 時間高度控制
-            document.getElementById('hDecBtn').onclick = function(e) { e.stopPropagation(); timeScaleY -= 0.1; updateTimeScale(); };
-            document.getElementById('hIncBtn').onclick = function(e) { e.stopPropagation(); timeScaleY += 0.1; updateTimeScale(); };
-
-            // 其他字體控制
-            document.getElementById('decreaseBtn1').onclick = function(e) { e.stopPropagation(); fontSizeMultiplier1 -= 0.1; updateFontSizes(); };
-            document.getElementById('increaseBtn1').onclick = function(e) { e.stopPropagation(); fontSizeMultiplier1 += 0.1; updateFontSizes(); };
-            document.getElementById('decreaseBtn3').onclick = function(e) { e.stopPropagation(); fontSizeMultiplier3 -= 0.1; updateFontSizes(); };
-            document.getElementById('increaseBtn3').onclick = function(e) { e.stopPropagation(); fontSizeMultiplier3 += 0.1; updateFontSizes(); };
-
-            setupTabSwitching();
+        // 縮放功能相容語法
+        function applyTransform() {
+            var style = "translate(-50%, -50%) scale(" + scaleX + "," + scaleY + ")";
+            tDiv.style.webkitTransform = style;
+            tDiv.style.transform = style;
         }
 
-        function updateTimeScale() {
-            timeScaleX = Math.max(0.1, timeScaleX);
-            timeScaleY = Math.max(0.1, timeScaleY);
-            tDE.style.transform = `scale(${timeScaleX}, ${timeScaleY})`;
-            document.getElementById('wLabel').textContent = Math.round(timeScaleX * 100) + '%';
-            document.getElementById('hLabel').textContent = Math.round(timeScaleY * 100) + '%';
-            saveSettings();
-        }
+        function adjustW(v) { scaleX += v; applyTransform(); }
+        function adjustH(v) { scaleY += v; applyTransform(); }
+        function toggleFormat() { is12H = !is12H; update(); }
+        function closeMenu() { menu.className = "main-popup"; }
 
-        function updateFontSizes() {
-            dDE.style.fontSize = (baseFontSizes.date * fontSizeMultiplier1) + 'px';
-            wDE.style.fontSize = (baseFontSizes.weather * fontSizeMultiplier3) + 'px';
-            document.getElementById('sizeLabel1').textContent = Math.round(fontSizeMultiplier1 * 100) + '%';
-            document.getElementById('sizeLabel3').textContent = Math.round(fontSizeMultiplier3 * 100) + '%';
-            saveSettings();
-        }
+        document.getElementById('controlBtn').onclick = function() {
+            menu.className = "main-popup show";
+        };
 
-        function setupTabSwitching() {
-            var fTab = document.getElementById('fontSizeTab'), cTab = document.getElementById('colorTab');
-            var fCont = document.getElementById('fontSizeContent'), cCont = document.getElementById('colorContent');
-            fTab.onclick = function(e) { e.stopPropagation(); fTab.classList.add('active'); cTab.classList.remove('active'); fCont.classList.add('active'); cCont.classList.remove('active'); };
-            cTab.onclick = function(e) { e.stopPropagation(); cTab.classList.add('active'); fTab.classList.remove('active'); cCont.classList.add('active'); fCont.classList.remove('active'); };
-        }
-
-        function initColorPalettes() {
-            var presets = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#FFFFFF', '#FF69B4', '#00CED1'];
-            for(let i=1; i<=3; i++) {
-                var p = document.getElementById('palette'+i);
-                presets.forEach(function(c) {
-                    var b = document.createElement('button');
-                    b.className = 'color-swatch';
-                    b.style.backgroundColor = c;
-                    b.onclick = function(e) { e.stopPropagation(); applyColor(i, c); };
-                    p.appendChild(b);
-                });
-            }
-        }
-
-        function applyColor(i, c) {
-            window['color'+i] = c;
-            var el = [null, dDE, tDE, wDE][i];
-            el.style.color = c;
-            saveSettings();
-        }
-
-        function saveSettings() {
-            localStorage.setItem('clockSettingsV2', JSON.stringify({
-                f1: fontSizeMultiplier1, f3: fontSizeMultiplier3,
-                tsX: timeScaleX, tsY: timeScaleY,
-                c1: color1, c2: color2, c3: color3,
-                is12h: is12HourFormat
-            }));
-        }
-
-        function loadSettings() {
-            var s = JSON.parse(localStorage.getItem('clockSettingsV2'));
-            if(s) {
-                fontSizeMultiplier1 = s.f1 || 1.0;
-                fontSizeMultiplier3 = s.f3 || 1.0;
-                timeScaleX = s.tsX || 1.0;
-                timeScaleY = s.tsY || 1.0;
-                color1 = s.c1 || '#FFFF00';
-                color2 = s.c2 || '#FFFFFF';
-                color3 = s.c3 || '#FFFF00';
-                is12HourFormat = (s.is12h !== undefined) ? s.is12h : true;
-            }
-            updateFontSizes();
-            updateTimeScale();
-            applyColor(1, color1); applyColor(2, color2); applyColor(3, color3);
-        }
-
-        function closeMainPopup() { popupOpen = false; document.getElementById('mainPopup').classList.remove('show'); }
-
-        window.onload = init;
+        // 啟動
+        setInterval(update, 1000);
+        update();
+        getWeather();
+        setInterval(getWeather, 600000);
     </script>
 </body>
 </html>
